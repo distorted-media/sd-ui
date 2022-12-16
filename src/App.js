@@ -1,6 +1,7 @@
 import React from 'react';
 import { useEffect } from 'react';
 import logo from './logo.svg';
+import headerImage from './images/creationHeader.PNG';
 import './App.css';
 import PhotoAlbum from "react-photo-album";
 import image1 from './images/emojiBling.png';
@@ -25,6 +26,7 @@ function App() {
   const [prompt, setPrompt] = React.useState('')
   const [image, updateImage] = React.useState()
   const [loading, updateLoading] = React.useState()
+  const [continuous, updateContinuous] = React.useState()
   const [photos, updatePhotos] = React.useState([])
 
   const handleChange = (event) => setPrompt(event.target.value)
@@ -45,6 +47,19 @@ function App() {
     updateLoading(false);
   };
 
+  const clearPhotos = () => {
+    updatePhotos([]);
+  };
+
+  const startStop = () => {
+    if(continuous == true) {
+      updateContinuous(false);
+    }
+    else {
+      updateContinuous(true);
+    }
+  };
+
 const SECOND_MS = 1000;
 
 useEffect(() => {
@@ -59,11 +74,7 @@ useEffect(() => {
     <div className="App">
         <ChakraProvider>
             <Container>
-              <Heading>Stable DIffusion🚀</Heading>
-                <Text marginBottom={"10px"}>
-                  {prompt}
-                </Text>
-
+              <Image src={headerImage}/>
                <Wrap marginBottom={"10px"}>
                 <Input
                   value={prompt}
@@ -71,19 +82,16 @@ useEffect(() => {
                   placeholder='what do you want to see?'
                   width={"350px"}
                 ></Input>
-                <Button onClick={(e) => generate(prompt)} colorScheme={"yellow"}>
+                <Button onClick={(e) => generate(prompt)} colorScheme={"green"}>
                   Generate
                 </Button>
+                <Button onClick={(e) => startStop()} colorScheme={"yellow"}>
+                  Start/Stop
+                </Button>
+                <Button onClick={(e) => clearPhotos()} colorScheme={"red"}>
+                  Clear
+                </Button>
               </Wrap>
-
-              {loading ? (
-                <Stack>
-                  <SkeletonCircle />
-                  <SkeletonText />
-                </Stack>
-              ) : image ? (
-                <Image src={`data:image/png;base64,${image}`} boxShadow="lg" />
-              ) : null}
             </Container>
         </ChakraProvider>
         <PhotoAlbum layout="rows" photos={photos} />

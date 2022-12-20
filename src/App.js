@@ -40,23 +40,25 @@ function App() {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
       },
+      // body: {
+      //   "prompt": "puppy",
+      //   "steps": 100
+      // }
       body: JSON.stringify({
         "prompt": prompt,
-        "steps": 100
-      }),
+        "steps": 10
+      })
     });
 
     result.json().then(data => {
       console.log(data);
+      updatePhotos(
+        [
+          ...photos,
+          { src: 'data:image/png;base64,' + data.images[0], width: 900, height: 512 }
+        ]
+      );
     });
-
-
-    updatePhotos(
-      [
-        ...photos,
-        { src: 'data:image/png;base64,' + result.data, width: 900, height: 512 }
-      ]
-    );
   };
 
   /* Clear all photos */

@@ -39,10 +39,12 @@ function App() {
 
   /* Start or stop continuous generation */
   const startStop = () => {
-    if(continuous == true) {
+    if(continuous === true) {
+      updateLoading(true);
       updateContinuous(false);
     }
     else {
+      updateLoading(false);
       updateContinuous(true);
     }
   };
@@ -51,7 +53,7 @@ function App() {
   /* Continuously generate images until continuous is false */
   useEffect(() => {
     const generate = async (oldPrompt, oldPhotos) => {
-      if(continuous){
+      if(continuous === true){
       /* json post request to the backend */
       const result = await fetch('http://127.0.0.1:7860/sdapi/v1/txt2img', {
         method: 'POST',
@@ -67,20 +69,19 @@ function App() {
 
       result.json().then(data => {
         console.log(data);
-        const magic = { src: 'data:image/png;base64,' + data.images[0], width: 900, height: 512 }
           updatePhotos([
             { src: 'data:image/png;base64,' + data.images[0], width: 900, height: 512 },
             ...oldPhotos
           ]);
         });
+        
       }
-
-      updateLoading(false)
     };
 
-    if(loading == false) {
+    if(loading === false) {
       updateLoading(true);
       generate(prompt, photos);
+      updateLoading(false)
     }
   });
 

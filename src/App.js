@@ -46,7 +46,7 @@ function App() {
       // }
       body: JSON.stringify({
         "prompt": prompt,
-        "steps": 10
+        "steps": 5
       })
     });
 
@@ -54,8 +54,8 @@ function App() {
       console.log(data);
       updatePhotos(
         [
-          ...photos,
-          { src: 'data:image/png;base64,' + data.images[0], width: 900, height: 512 }
+          { src: 'data:image/png;base64,' + data.images[0], width: 900, height: 512 },
+          ...photos
         ]
       );
     });

@@ -24,8 +24,6 @@ import axios from "axios";
 
 function App() {
   const [prompt, setPrompt] = React.useState('')
-  const [image, updateImage] = React.useState()
-  const [loading, updateLoading] = React.useState()
   const [continuous, updateContinuous] = React.useState()
   const [photos, updatePhotos] = React.useState([])
 
@@ -33,24 +31,40 @@ function App() {
 
   const delay = ms => new Promise(res => setTimeout(res, ms))
 
+  /* Generate a single image and add it to photos */
   const generate = async (prompt) => {
-    updateLoading(true);
-    // const result = await axios.get(`http://127.0.0.1:8000/?prompt=${prompt}`);
-    const result = await axios.get('https://upload.wikimedia.org/wikipedia/commons/6/6a/PNG_Test.png');
+    /* json post request to the backend */
+    const result = await fetch('http://127.0.0.1:7860/sdapi/v1/txt2img', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        "prompt": prompt,
+        "steps": 100
+      }),
+    });
+
+    result.json().then(data => {
+      console.log(data);
+    });
+
+
     updatePhotos(
       [
         ...photos,
-        { src: image1, width: 900, height: 512 }
+        { src: 'data:image/png;base64,' + result.data, width: 900, height: 512 }
       ]
     );
-    updateImage(result.data);
-    updateLoading(false);
   };
 
+  /* Clear all photos */
   const clearPhotos = () => {
     updatePhotos([]);
   };
 
+  /* Start or stop continuous generation */
   const startStop = () => {
     if(continuous == true) {
       updateContinuous(false);
@@ -62,6 +76,8 @@ function App() {
 
 const SECOND_MS = 1000;
 
+/* This is the continuous generation loop */
+/* Continuously generate images until continuous is false */
 useEffect(() => {
   const interval = setInterval(() => {
     console.log('Logs every second');

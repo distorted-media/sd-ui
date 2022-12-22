@@ -43,14 +43,12 @@ function App() {
   const startStop = () => {
     /* Curently generating images, set state to false */
     if(startButtonState === true) {
-      updateLoading(true);
       updateStartButtonState(false);
       updateStartButtonColor('green');
       updateStartButtonText('Start');
     }
     /* Not currently generating images, set state to true */
     else {
-      updateLoading(false);
       updateStartButtonState(true);
       updateStartButtonColor('red');
       updateStartButtonText('Stop');

@@ -76,7 +76,7 @@ function App() {
         },
         body: JSON.stringify({
           "prompt": prompt,
-          "steps": 10
+          "steps": 100
         })
       });
 
@@ -116,7 +116,7 @@ function App() {
               </Wrap>
             </Container>
         </ChakraProvider>
-        <PhotoAlbum layout="rows" photos={photos} />
+        <PhotoAlbum layout="rows" photos={photos} targetRowHeight={512}/>
     </div>
   );
 }

@@ -92,7 +92,6 @@ function App() {
     };
 
     generate();
-
     return () => clearInterval(interval);
   }, [startButtonState, photos]);
 
@@ -100,7 +99,7 @@ function App() {
     <div className="App">
         <ChakraProvider>
             <Container>
-              <Image src={headerImage}/>
+              {/* <Image src={headerImage}/> */}
                <Wrap marginBottom={"10px"}>
                 <Input
                   value={prompt}

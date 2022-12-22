@@ -31,6 +31,8 @@ function App() {
   const [startButtonColor, updateStartButtonColor] = React.useState('green')
   const [startButtonText, updateStartButtonText] = React.useState('Start')
 
+  let mutex = false;
+
   /* Change prompt when textbox changes */
   const handleChange = (event) => setPrompt(event.target.value)
 
@@ -59,7 +61,11 @@ function App() {
   /* Continuously generate images until continuous is false */
   useEffect(() => {
     const generate = async (oldPrompt, oldPhotos) => {
+      if (mutex) {
+        return;
+      }
       if(startButtonState === true){
+      mutex = ture;
       /* json post request to the backend */
       const result = await fetch('http://127.0.0.1:7860/sdapi/v1/txt2img', {
         method: 'POST',
@@ -80,15 +86,10 @@ function App() {
             ...oldPhotos
           ]);
         });
-        
       }
+      mutex = false;
     };
-
-    if(loading === false) {
-      updateLoading(true);
-      generate(prompt, photos);
-      updateLoading(false)
-    }
+    generate(prompt, photos);
   });
 
   return (

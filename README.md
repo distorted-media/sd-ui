@@ -1,3 +1,14 @@
+# Stable Diffusion Infinite Generation UI
+WIP
+A basic responsive React based UI for image generation that uses the AUTOMAIC111 stable-diffusion-webui API.
+
+Features
+- Generates an infinite grid images. 
+
+# Use
+Install nix then run `nix-shell`
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).

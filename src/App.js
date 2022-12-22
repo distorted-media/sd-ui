@@ -76,7 +76,7 @@ function App() {
         },
         body: JSON.stringify({
           "prompt": prompt,
-          "steps": 50
+          "steps": 10
         })
       });
 
@@ -91,16 +91,10 @@ function App() {
       mutex = false;
     };
 
-    if (startButtonState === true) {
-      interval = setInterval(() => {
-        generate(prompt, photos);
-      }, 1000); // Run generate every 1 second
-    } else {
-      clearInterval(interval);
-    }
+    generate();
 
     return () => clearInterval(interval);
-  }, [startButtonState, prompt]);
+  }, [startButtonState, photos]);
 
   return (
     <div className="App">

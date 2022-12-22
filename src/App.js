@@ -32,6 +32,7 @@ function App() {
   const [startButtonText, updateStartButtonText] = React.useState('Start')
 
   let mutex = false;
+  let interval = null;
 
   /* Change prompt when textbox changes */
   const handleChange = (event) => setPrompt(event.target.value)
@@ -60,12 +61,12 @@ function App() {
   /* This is the continuous generation loop */
   /* Continuously generate images until continuous is false */
   useEffect(() => {
-    const generate = async (oldPrompt, oldPhotos) => {
+    const generate = async () => {
       if (mutex) {
         return;
       }
       if(startButtonState === true){
-      mutex = ture;
+      mutex = true;
       /* json post request to the backend */
       const result = await fetch('http://127.0.0.1:7860/sdapi/v1/txt2img', {
         method: 'POST',
@@ -74,7 +75,7 @@ function App() {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          "prompt": oldPrompt,
+          "prompt": prompt,
           "steps": 50
         })
       });
@@ -83,14 +84,23 @@ function App() {
         console.log(data);
           updatePhotos([
             { src: 'data:image/png;base64,' + data.images[0], width: 900, height: 512 },
-            ...oldPhotos
+            ...photos
           ]);
         });
       }
       mutex = false;
     };
-    generate(prompt, photos);
-  });
+
+    if (startButtonState === true) {
+      interval = setInterval(() => {
+        generate(prompt, photos);
+      }, 1000); // Run generate every 1 second
+    } else {
+      clearInterval(interval);
+    }
+
+    return () => clearInterval(interval);
+  }, [startButtonState, prompt]);
 
   return (
     <div className="App">

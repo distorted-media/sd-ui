@@ -24,10 +24,12 @@ import image2 from './images/emojiGrillz.jpg';
 import logo from './logo.svg';
 
 function App() {
-  const [prompt, setPrompt] = React.useState('')
-  const [continuous, updateContinuous] = React.useState()
+  const [prompt, setPrompt] = React.useState('') // prompt for the model
   const [photos, updatePhotos] = React.useState([])
   const [loading, updateLoading] = React.useState(false)
+  const [startButtonState, updateStartButtonState] = React.useState(false)
+  const [startButtonColor, updateStartButtonColor] = React.useState('green')
+  const [startButtonText, updateStartButtonText] = React.useState('Start')
 
   /* Change prompt when textbox changes */
   const handleChange = (event) => setPrompt(event.target.value)
@@ -37,15 +39,21 @@ function App() {
     updatePhotos([]);
   };
 
-  /* Start or stop continuous generation */
+  /* Start or stop continuous generation of images */
   const startStop = () => {
-    if(continuous === true) {
+    /* Curently generating images, set state to false */
+    if(startButtonState === true) {
       updateLoading(true);
-      updateContinuous(false);
+      updateStartButtonState(false);
+      updateStartButtonColor('green');
+      updateStartButtonText('Start');
     }
+    /* Not currently generating images, set state to true */
     else {
       updateLoading(false);
-      updateContinuous(true);
+      updateStartButtonState(true);
+      updateStartButtonColor('red');
+      updateStartButtonText('Stop');
     }
   };
 
@@ -53,7 +61,7 @@ function App() {
   /* Continuously generate images until continuous is false */
   useEffect(() => {
     const generate = async (oldPrompt, oldPhotos) => {
-      if(continuous === true){
+      if(startButtonState === true){
       /* json post request to the backend */
       const result = await fetch('http://127.0.0.1:7860/sdapi/v1/txt2img', {
         method: 'POST',
@@ -97,8 +105,8 @@ function App() {
                   placeholder='what do you want to see?'
                   width={"300px"}
                 ></Input>
-                <Button onClick={(e) => startStop()} colorScheme={"yellow"}>
-                  Start/Stop
+                <Button onClick={(e) => startStop()} colorScheme={startButtonColor}>
+                  {startButtonText}
                 </Button>
                 <Button onClick={(e) => clearPhotos()} colorScheme={"red"}>
                   Clear

@@ -26,13 +26,11 @@ import logo from './logo.svg';
 function App() {
   const [prompt, setPrompt] = React.useState('') // prompt for the model
   const [photos, updatePhotos] = React.useState([])
-  const [loading, updateLoading] = React.useState(false)
   const [startButtonState, updateStartButtonState] = React.useState(false)
   const [startButtonColor, updateStartButtonColor] = React.useState('green')
   const [startButtonText, updateStartButtonText] = React.useState('Start')
 
   let mutex = false;
-  let interval = null;
 
   /* Change prompt when textbox changes */
   const handleChange = (event) => setPrompt(event.target.value)
@@ -92,7 +90,6 @@ function App() {
     };
 
     generate();
-    return () => clearInterval(interval);
   }, [startButtonState, photos]);
 
   return (

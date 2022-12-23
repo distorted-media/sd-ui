@@ -20,25 +20,60 @@ let
  # }) {};
   #];
 
+   pyInputs = with pkgs.python38Packages; [
+      pkgs.python38
+      virtualenv
+      virtualenvwrapper
+      pip
+   ];
+
 in pkgs.stdenv.mkDerivation rec {
    name = "cuda-env-shell";
+   env_home = "Development";
+   repo = "sd-ui";
+   req_location = "requirements_versioned.txt";
+
    buildInputs = with pkgs; [
-     git gitRepo gnupg autoconf curl
-     procps gnumake util-linux m4 gperf unzip
-     cudatoolkit linuxPackages.nvidia_x11
-     libGLU libGL
-     xorg.libXi xorg.libXmu freeglut
-     xorg.libXext xorg.libX11 xorg.libXv xorg.libXrandr zlib 
-     ncurses5 stdenv.cc binutils
-     glib
-     conda
-     yarn
+      pyInputs
+      git gitRepo gnupg autoconf curl
+      procps gnumake util-linux m4 gperf unzip
+      cudatoolkit linuxPackages.nvidia_x11
+      libGLU libGL
+      xorg.libXi xorg.libXmu freeglut
+      xorg.libXext xorg.libX11 xorg.libXv xorg.libXrandr zlib 
+      ncurses5 stdenv.cc binutils
+      glib
+      conda
+      yarn
    ];
    
    LD_LIBRARY_PATH="${pkgs.linuxPackages.nvidia_x11}/lib:${pkgs.ncurses5}/lib:${pkgs.glib.out}/lib:$LD_LIBRARY_PATH";
    shellHook = ''
       # set SOURCE_DATE_EPOCH so that we can use python wheels
       SOURCE_DATE_EPOCH=$(date +%s)
+      
+      # ENV_HOME
+      export ENV_HOME="$HOME/${env_home}/${repo}"
+      export PYTHONPATH="$PYTHONPATH:$ENV_HOME"
+
+      # use virtualenvwrapper to manage envs
+      export WORKON_HOME="$ENV_HOME/Envs"
+      mkdir -p $WORKON_HOME
+      source $(command -v virtualenvwrapper.sh)
+
+      # install
+      mkvirtualenv ${name}
+      workon ${name}
+      python3 -m pip install -r "$ENV_HOME/${req_location}"
+
+      # optional
+      python $ENV_HOME/jupyter_rename.py --repo=${repo} --name=${name}
+      python $ENV_HOME/requirements_versioned.py --repo=${repo}
+      pip list --format=freeze > requirements_versioned_full.txt
+
+      # prompt that says the derivation
+      PS1="\[\033[1;34m\][nix-shell-${name}:\w]\n\$ \[\033[0m\]"
+      
       export CUDA_PATH="${pkgs.cudatoolkit}"
       # export LD_LIBRARY_PATH="${pkgs.linuxPackages.nvidia_x11}/lib:${pkgs.ncurses5}/lib:${pkgs.glib.out}/lib"
       export EXTRA_LDFLAGS="-L/lib -L${pkgs.linuxPackages.nvidia_x11}/lib"

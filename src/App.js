@@ -21,7 +21,7 @@ import './App.css';
 import headerImage from './images/creationHeader.PNG';
 import image1 from './images/emojiBling.png';
 import image2 from './images/emojiGrillz.jpg';
-import logo from './logo.svg';
+import logo from './images/DistortedMedia_Logo_Circle.png';
 
 function App() {
   const [prompt, setPrompt] = React.useState('') // prompt for the model
